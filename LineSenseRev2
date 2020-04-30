@@ -1,0 +1,132 @@
+*
+ * This version of code is meant to test integrating
+ * the line following code with motors
+ * Note that the all the code from the motors was
+ * Taken from the code that came with the car
+ */
+
+//define the L298n IO pin
+#define ENA 5
+#define ENB 6
+#define IN1 7
+#define IN2 8
+#define IN3 9
+#define IN4 11
+
+
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(9600);
+pinMode(10, INPUT);
+pinMode(4, INPUT);
+pinMode(2, INPUT);
+pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
+  digitalWrite(ENA, HIGH);  
+  digitalWrite(ENB, HIGH); 
+
+}
+int Right;
+int Cent;
+int Left;
+
+void loop() {
+  LineSense();
+}
+
+void LineSense(){
+  Right = digitalRead(10);
+  Serial.print("Right = ");
+  Serial.println(Right);
+  Cent = digitalRead(4);
+  Serial.print("Cent = ");
+  Serial.println(Cent);
+  Left = digitalRead(2);
+  Serial.print("Left = ");
+  Serial.println(Left);
+
+
+  if((Left == 0 & Cent == 1 & Right == 1)|(Left == 0 & Cent == 0 & Right == 1)){
+    Serial.println("Turn Left");
+    while(Left == 0){
+      Left = digitalRead(2);
+      TurnLeft();
+      //Turn Left
+    }
+    Stop();
+  }
+
+  if(Left == 1 & Cent == 0 & Right == 1){
+    Serial.println("Go straight");
+    while(Cent == 0){
+      Cent = digitalRead(4);
+      GoForward();
+      //Go straight
+    }
+    Stop();
+  }
+
+  if((Left == 1 & Cent == 1 & Right == 0)|(Left == 1 & Cent == 0 & Right == 0)){
+    Serial.println("Turn Right");
+    while(Right == 0){
+      Right = digitalRead(10);
+      TurnRight();
+    //Turn Right
+    }
+    Stop();
+  }
+
+  if(Left == 0 & Cent == 0 & Right == 0){
+    Serial.println("Stop");
+    Stop();
+    //Stop
+  }
+  else if(Left == 1 & Cent == 1 & Right == 1){
+    while(Left == 1 & Cent == 1 & Right == 1){
+      Right = digitalRead(10);
+      Cent = digitalRead(4);
+      Left = digitalRead(2);
+    Serial.println("Go straight");
+    GoForward();
+    //Go straight
+  }
+  Stop();
+  }
+}
+
+
+void GoForward(){
+  analogWrite(ENA, 85);  
+  analogWrite(ENB, 85);
+  digitalWrite(IN1, HIGH);      
+  digitalWrite(IN2, LOW); 
+  digitalWrite(IN3, LOW);      
+  digitalWrite(IN4, HIGH);  //go forward
+  return;
+}
+
+void TurnRight(){
+  analogWrite(ENA, 85);  
+  analogWrite(ENB, 85);
+  digitalWrite(IN1, HIGH);      
+  digitalWrite(IN2, LOW);
+}
+
+void TurnLeft(){
+  analogWrite(ENA, 85);  
+  analogWrite(ENB, 85);
+  digitalWrite(IN3, LOW);      
+  digitalWrite(IN4, HIGH);
+}
+
+void Stop(){
+  digitalWrite(IN1, LOW);      
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);      
+  digitalWrite(IN4, LOW);
+  return;
+}
