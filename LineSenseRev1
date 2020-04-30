@@ -1,0 +1,61 @@
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(9600);
+pinMode(10, INPUT);
+pinMode(4, INPUT);
+pinMode(2, INPUT);
+
+}
+int Right;
+int Cent;
+int Left;
+
+void loop() {
+  LineSense();
+}
+
+void LineSense(){
+  Right = digitalRead(10);
+  Serial.print("Right = ");
+  Serial.println(Right);
+  Cent = digitalRead(4);
+  Serial.print("Cent = ");
+  Serial.println(Cent);
+  Left = digitalRead(2);
+  Serial.print("Left = ");
+  Serial.println(Left);
+
+
+  if(Left == 0 & Cent == 1 & Right == 1){
+    Serial.println("Turn Left");
+    while(Left == 0){
+      Left = digitalRead(2);
+      //Turn Left
+    }
+  }
+
+  if(Left == 1 & Cent == 0 & Right == 1){
+    Serial.println("Go straight");
+    while(Cent == 0){
+      Cent = digitalRead(4);
+      //Go straight
+    }
+  }
+
+  if(Left == 1 & Cent == 1 & Right == 0){
+    Serial.println("Turn Right");
+    while(Right == 0){
+      Right = digitalRead(10);
+    //Turn Right
+    }
+  }
+
+  if(Left == 0 & Cent == 0 & Right == 0){
+    Serial.println("Stop");
+    //Stop
+  }
+  else{
+    Serial.println("Go straight");
+    //Go straight
+  }
+}
