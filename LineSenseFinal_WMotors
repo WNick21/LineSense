@@ -1,0 +1,124 @@
+/*
+ * This version of code is meant to test integrating
+ * the line following code with motors
+ * Note that the all the code from the motors was
+ * Taken from the code that came with the car
+ */
+
+//define the L298n IO pin
+//All these pins are for the motors
+#define ENA 5
+#define ENB 6
+#define IN1 7
+#define IN2 8
+#define IN3 9
+#define IN4 11
+
+
+void setup() {
+//Set up for the sensor pins
+pinMode(10, INPUT);//Right
+pinMode(4, INPUT);//Center
+pinMode(2, INPUT);//Left
+
+//Set up for the motor pins
+pinMode(IN1, OUTPUT);
+pinMode(IN2, OUTPUT);
+pinMode(IN3, OUTPUT);
+pinMode(IN4, OUTPUT);
+pinMode(ENA, OUTPUT);
+pinMode(ENB, OUTPUT);
+digitalWrite(ENA, HIGH);  
+digitalWrite(ENB, HIGH); 
+
+}
+int Right;//Value for right sensor
+int Cent;//Value for center sensor
+int Left;//Value for left sensor
+
+
+void loop() {
+  LineSense();//Self contained line sensing function
+}
+
+
+/*
+ * LineSense() is a funtion that operates by itself
+ * It reads the value from the sensor then decides
+ * If it needs to turn the car or keep going straight
+ */
+
+void LineSense(){
+  Right = digitalRead(10);//Read the right sensor
+  Cent = digitalRead(4);//Read the center sensor
+  Left = digitalRead(2);//Read the left sensor
+
+
+ if(Cent == 0){//If the middle sensor is on a dark spot
+    while(Cent == 0){ //While centered on the dark spot
+      GoForward(); //Go forward
+      Cent = digitalRead(4);//Check if you are still on the dark spot
+    } 
+  }
+
+ else if(Left == 0){ //If the left sensor is on a dark spot
+    while(Left == 0){//While the left is on the dark spot
+      TurnLeft(); //Turn left
+      Left = digitalRead(2); //Check if you are still on the dark spot
+    }
+    
+  }
+
+
+  else if(Right == 0){//If the right sensor is on a dark spot
+    while(Right == 0){//While the dark spot is on the right
+      TurnRight();//Turn right
+      Right = digitalRead(10);//Check if you are still on the dark spot
+    }
+   
+  }
+
+  else if(Left == 0 & Cent == 0 & Right == 0){//If all 3 sensor on dark spot
+    Stop();//Stop
+  }
+
+  
+}
+
+//Functions for the motors
+//Taken straight from the elegoo code
+
+void GoForward(){
+    analogWrite(ENA, 150);
+  analogWrite(ENB, 150);
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  return;
+}
+
+void TurnRight(){
+  analogWrite(ENA, 150);
+  analogWrite(ENB, 150);
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+}
+
+void TurnLeft(){
+  analogWrite(ENA, 150);
+  analogWrite(ENB, 150);
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+}
+
+void Stop(){
+  digitalWrite(IN1, LOW);      
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);      
+  digitalWrite(IN4, LOW);
+}
