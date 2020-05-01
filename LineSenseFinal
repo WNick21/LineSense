@@ -1,0 +1,66 @@
+/*
+ * This is the final version of code but only code
+ * that is relevant to the line sense function
+ * i.e. no motor integration
+ */
+
+void setup() {
+//Set up for the sensor pins
+pinMode(10, INPUT);//Right
+pinMode(4, INPUT);//Center
+pinMode(2, INPUT);//Left 
+}
+
+int Right;//Value for right sensor
+int Cent;//Value for center sensor
+int Left;//Value for left sensor
+
+
+void loop() {
+  LineSense();//Self contained line sensing function
+}
+
+
+/*
+ * LineSense() is a funtion that operates by itself
+ * It reads the value from the sensor then decides
+ * If it needs to turn the car or keep going straight
+ */
+
+void LineSense(){
+  Right = digitalRead(10);//Read the right sensor
+  Cent = digitalRead(4);//Read the center sensor
+  Left = digitalRead(2);//Read the left sensor
+
+
+ if(Cent == 0){//If the middle sensor is on a dark spot
+    while(Cent == 0){ //While centered on the dark spot
+      //Go forward here
+      Cent = digitalRead(4);//Check if you are still on the dark spot
+    } 
+  }
+
+ else if(Left == 0){ //If the left sensor is on a dark spot
+    while(Left == 0){//While the left is on the dark spot
+      //Turn left here
+      Left = digitalRead(2); //Check if you are still on the dark spot
+    }
+    
+  }
+
+
+  else if(Right == 0){//If the right sensor is on a dark spot
+    while(Right == 0){//While the dark spot is on the right
+      //Turn right here
+      Right = digitalRead(10);//Check if you are still on the dark spot
+    }
+   
+  }
+
+  else if(Left == 0 & Cent == 0 & Right == 0){//If all 3 sensor on dark spot
+  //Stop
+  }
+
+  
+}
+
